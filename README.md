@@ -2,21 +2,17 @@
 
 ## Lab 1
 
-Emit the default metrics
+Emit the default metrics [lab1](./lab1/README.md)
 
 ## Lab 2
 
-Emit http server metrics
+Emit garbage collection metrics [lab2](./lab2/README.md)
 
 ## Lab 3
 
-Emit garbage collection metrics
+Emit http server metrics
 
 ## Lab 4
-
-Emit http client metrics against Cloudant DB
-
-## Lab 5
 
 Send metrics to Prometheus push gateway.
 This use case is useful when the container has a very short life span (ie Serverless/Knative) and the scrape time window is to large to get metrics from the container.
@@ -24,4 +20,9 @@ This use case is useful when the container has a very short life span (ie Server
 ## Lab 6
 
 Show all all Labs working in a single app
+
+## Lab 5
+
+Emit http client metrics against Cloudant DB
+
 
