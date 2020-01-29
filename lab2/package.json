@@ -5,7 +5,8 @@
     "scripts": {
         "start": "node app.js",
         "debug": "npm start",
-        "vscode": "node --inspect-brk=9229 app.js"
+        "vscode": "node --inspect-brk=9229 app.js",
+        "lint": "standard app.js --fix"
     },
     "dependencies": {
         "express": "^4.17.1",
