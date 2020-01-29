@@ -11,3 +11,4 @@ app.get('/', hello)
 app.disable('etag')
 app.listen(port, () => console.log(`Service listening on port ${port}!`))
 
+module.exports = app
