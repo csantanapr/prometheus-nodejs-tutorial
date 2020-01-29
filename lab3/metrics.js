@@ -1,6 +1,5 @@
 const url = require('url');
 const Prometheus = require('prom-client');
-const gcStats = require('prometheus-gc-stats');
 const promRegister = Prometheus.register;
 
 const httpRequestHistogram = new Prometheus.Histogram({
