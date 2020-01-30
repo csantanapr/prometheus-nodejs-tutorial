@@ -1,4 +1,3 @@
-const url = require('url')
 const Prometheus = require('prom-client')
 const promRegister = Prometheus.register
 
@@ -18,7 +17,7 @@ module.exports = (app) => {
 }
 
 const httpResponseMiddleware = (req, res, next) => {
-  const path = url.parse(req.url).pathname
+  const path = new URL(req.url, `http://${req.hostname}`).pathname
   res.histogramEnd = httpRequestHistogram.startTimer({
     method: req.method,
     handler: path

@@ -2,8 +2,6 @@
 
 See the content of [./metrics.js](./metrics.js)
 ```js
-const url = require('url')
-const os = require('os')
 const Prometheus = require('prom-client')
 const gcStats = require('prometheus-gc-stats')
 
@@ -19,15 +17,14 @@ const startGcStats = gcStats(promRegister)
 startGcStats()
 
 // push metrics to prometheus gateway every 5 seconds
+const os = require('os')
 const gateway = new Prometheus.Pushgateway('http://localhost:9091', {}, promRegister)
 const hostname = os.hostname()
 
-
 setInterval((app) => {
   console.log('pushing metrics...')
-  gateway.pushAdd({ jobName: 'nodejs', groupings: { instance: hostname } }, function (err, resp, body) { })
+  gateway.pushAdd({ jobName: 'nodejs', groupings: { instance: hostname } }, (err, resp, body) => { if (err) { console.error(err.message) } })
 }, 5000)
-
 
 // histogram for http requests on the web server
 const httpRequestHistogram = new Prometheus.Histogram({
@@ -47,7 +44,7 @@ module.exports = (app) => {
 }
 
 const httpResponseMiddleware = (req, res, next) => {
-  const path = url.parse(req.url).pathname
+  const path = new URL(req.url, `http://${req.hostname}`).pathname
   res.histogramEnd = httpRequestHistogram.startTimer({
     method: req.method,
     handler: path

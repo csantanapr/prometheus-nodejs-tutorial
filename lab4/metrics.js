@@ -1,14 +1,13 @@
-const url = require('url')
-const os = require('os')
 const Prometheus = require('prom-client')
 
+const os = require('os')
 const gateway = new Prometheus.Pushgateway('http://localhost:9091', {}, Prometheus.register)
 const hostname = os.hostname()
 
 // push metrics to prometheus gateway every 5 seconds
 setInterval((app) => {
   console.log('pushing metrics...')
-  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, function (err, resp, body) { })
+  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, (err, resp, body) => { if (err) { console.error(err.message) } })
 }, 5000)
 
 const httpRequestHistogram = new Prometheus.Histogram({
@@ -23,7 +22,7 @@ module.exports = (app) => {
 }
 
 const httpResponseMiddleware = (req, res, next) => {
-  const path = url.parse(req.url).pathname
+  const path = new URL(req.url, `http://${req.hostname}`).pathname
   res.histogramEnd = httpRequestHistogram.startTimer({
     method: req.method,
     handler: path
