@@ -11,7 +11,6 @@ app.get('/', async (req, res) => {
   setTimeout(async () => {
     res.send('Hello World')
   }, counter++ % 3 === 0 ? 100 : 0)
-
 })
 app.disable('etag')
 app.listen(port, () => console.log(`Service listening on port ${port}!`))
