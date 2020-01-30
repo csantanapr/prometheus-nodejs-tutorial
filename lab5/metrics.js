@@ -1,20 +1,31 @@
-# Push http server metrics
-
-See the content of [./metrics.js](./metrics.js)
-```js
 const url = require('url')
 const os = require('os')
 const Prometheus = require('prom-client')
+const gcStats = require('prometheus-gc-stats')
+
 const promRegister = Prometheus.register
-const gateway = new Prometheus.Pushgateway('http://localhost:9091')
-const hostname = os.hostname()
+
+// Default metrics
+const collectDefaultMetrics = Prometheus.collectDefaultMetrics
+// timestamp its not remove from all metrics
+collectDefaultMetrics({ timestamps: false })
+
+// Garbage Collection metrics
+const startGcStats = gcStats(promRegister)
+startGcStats()
 
 // push metrics to prometheus gateway every 5 seconds
+const gateway = new Prometheus.Pushgateway('http://localhost:9091', {}, promRegister)
+const hostname = os.hostname()
+
+
 setInterval((app) => {
   console.log('pushing metrics...')
-  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, function (err, resp, body) { })
+  gateway.pushAdd({ jobName: 'nodejs', groupings: { instance: hostname } }, function (err, resp, body) { })
 }, 5000)
 
+
+// histogram for http requests on the web server
 const httpRequestHistogram = new Prometheus.Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds histogram',
@@ -23,6 +34,7 @@ const httpRequestHistogram = new Prometheus.Histogram({
 })
 
 module.exports = (app) => {
+  // expose metrics to be scrape
   app.get('/metrics', (req, res, next) => {
     res.set('Content-Type', promRegister.contentType)
     res.end(promRegister.metrics())
@@ -43,34 +55,3 @@ const httpResponseMiddleware = (req, res, next) => {
   })
   next()
 }
-```
-
-In a new terminal start the Prometheus gateway.
-```bash
-docker pull prom/pushgateway
-```
-
-```bash
-docker run --rm -p 9091:9091 prom/pushgateway
-```
-
-Start the application
-```bash
-npm install
-```
-
-```bash
-npm start
-```
-
-The web server will push the metrics every 5 seconds as configured in the code.
-
-Metrics are not available via scrape endpoint `/metrics` on the Node.js web server.
-
-You can access the metrics from the gateway using http://localhost:9091/metrics
-
-Open the UI on Prometheus Metrics http://localhost:9091/
-
-Expand the job `http_metrics`, then expand the histogram metric `http_request_duration_seconds`.
-
-![pushgateway user interface](pushgateway.png)
