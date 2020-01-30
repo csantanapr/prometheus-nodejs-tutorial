@@ -51,7 +51,7 @@ docker pull prom/pushgateway
 ```
 
 ```bash
-docker run -p 9091:9091 prom/pushgateway
+docker run --rm -p 9091:9091 prom/pushgateway
 ```
 
 Start the application

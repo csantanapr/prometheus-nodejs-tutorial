@@ -1,8 +1,8 @@
 const url = require('url')
 const os = require('os')
 const Prometheus = require('prom-client')
-const promRegister = Prometheus.register
-const gateway = new Prometheus.Pushgateway('http://localhost:9091')
+
+const gateway = new Prometheus.Pushgateway('http://localhost:9091', {}, Prometheus.register)
 const hostname = os.hostname()
 
 // push metrics to prometheus gateway every 5 seconds
