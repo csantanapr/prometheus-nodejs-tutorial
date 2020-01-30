@@ -76,11 +76,16 @@ npm install
 npm start
 ```
 
+Use the app
+```bash
+open http://localhost:8080/
+```
+
 The web server will push the metrics every 5 seconds as configured in the code.
 
 You can access the metrics from the gateway using http://localhost:9091/metrics
 
-Metrics are also available via scrape endpoint http://localhost/metrics on the Node.js web server.
+Metrics are also available via scrape endpoint http://localhost:8080/metrics on the Node.js web server.
 
 Open the UI on Prometheus Metrics http://localhost:9091/
 

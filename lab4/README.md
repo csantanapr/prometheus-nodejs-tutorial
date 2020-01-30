@@ -58,6 +58,11 @@ npm install
 npm start
 ```
 
+Use the app
+```bash
+open http://localhost:8080/
+```
+
 The web server will push the metrics every 5 seconds as configured in the code.
 
 Metrics are not available via scrape endpoint `/metrics` on the Node.js web server.

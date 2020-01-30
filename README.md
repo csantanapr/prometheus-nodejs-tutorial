@@ -26,4 +26,6 @@ Combined all examples [lab5](./lab5/README.md)
 
 Putting all the examples together, collects all metrics, sends to push gateway and available via scrape endpoint on the Node.js web server
 
+## Lab 6
 
+Using the prom-client express middleware wrapper [express-prom-bundle](https://www.npmjs.com/package/express-prom-bundle)

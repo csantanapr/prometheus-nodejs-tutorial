@@ -27,9 +27,14 @@ npm install
 npm start
 ```
 
-Get the metrics via `/metrics`
+Use the app
+```bash
+open http://localhost:8080/
 ```
-curl localhost:8080/metrics
+
+Get the metrics via `/metrics`
+```bash
+curl http://localhost:8080/metrics
 ```
 
 Here is an example of the output:
