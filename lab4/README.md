@@ -1,4 +1,4 @@
-# Emit http server metrics
+# Push http server metrics
 
 See the content of [./metrics.js](./metrics.js)
 ```js
