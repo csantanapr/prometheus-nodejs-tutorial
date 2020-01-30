@@ -2,18 +2,19 @@
 
 See the content of [./metrics.js](./metrics.js)
 ```js
-const Prometheus = require('prom-client');
+const Prometheus = require('prom-client')
 
-const promRegister = Prometheus.register;
-const collectDefaultMetrics = Prometheus.collectDefaultMetrics;
+const promRegister = Prometheus.register
+const collectDefaultMetrics = Prometheus.collectDefaultMetrics
 
-collectDefaultMetrics({ timestamps: false });
+// timestamp its not remove from all metrics
+collectDefaultMetrics({ timestamps: false })
 
 module.exports = (app) => {
-    app.get('/metrics', (req, res, next) => {
-        res.set('Content-Type', promRegister.contentType);
-        res.end(promRegister.metrics());
-    });
+  app.get('/metrics', (req, res, next) => {
+    res.set('Content-Type', promRegister.contentType)
+    res.end(promRegister.metrics())
+  })
 }
 ```
 
