@@ -17,7 +17,7 @@ module.exports = (app) => {
 }
 
 const httpResponseMiddleware = (req, res, next) => {
-  const path = new URL(req.url, 'http://localhost').pathname
+  const path = new URL(req.url, `http://${req.hostname}`).pathname
   res.histogramEnd = httpRequestHistogram.startTimer({
     method: req.method,
     handler: path
