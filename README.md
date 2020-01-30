@@ -1,4 +1,4 @@
-# Node.js usin prom-client library
+# Using prom-client library in Node.js
 
 ## Lab 1
 
@@ -14,9 +14,6 @@ Emit http server metrics [lab3](./lab3/README.md)
 
 ## Lab 4
 
-Push metrics to Prometheus push gateway [lab4](./lab4/README.md)
+Push metrics to [Prometheus push gateway](https://github.com/prometheus/pushgateway) [lab4](./lab4/README.md)
 
 This use case is useful when the container has a very short life span (ie Serverless/Knative) and the scrape time window is to large to get metrics from the container.
-
-
-

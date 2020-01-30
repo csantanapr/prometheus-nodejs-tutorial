@@ -3,8 +3,17 @@
 See the content of [./metrics.js](./metrics.js)
 ```js
 const url = require('url')
+const os = require('os')
 const Prometheus = require('prom-client')
 const promRegister = Prometheus.register
+const gateway = new Prometheus.Pushgateway('http://localhost:9091')
+const hostname = os.hostname()
+
+// push metrics to prometheus gateway every 5 seconds
+setInterval((app) => {
+  console.log('pushing metrics...')
+  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, function (err, resp, body) { })
+}, 5000)
 
 const httpRequestHistogram = new Prometheus.Histogram({
   name: 'http_request_duration_seconds',
@@ -36,7 +45,16 @@ const httpResponseMiddleware = (req, res, next) => {
 }
 ```
 
+In a new terminal start the Prometheus gateway.
+```bash
+docker pull prom/pushgateway
+```
 
+```bash
+docker run -p 9091:9091 prom/pushgateway
+```
+
+Start the application
 ```bash
 npm install
 ```
@@ -45,31 +63,10 @@ npm install
 npm start
 ```
 
-Get the metrics via `/metrics`
-```
-curl localhost:8080/metrics
-```
+The web server will push the metrics every 5 seconds as configured in the code.
 
-Here is an example of the output:
-```
-# HELP http_request_duration_seconds Duration of HTTP requests in seconds histogram
-# TYPE http_request_duration_seconds histogram
-http_request_duration_seconds_bucket{le="0.025",method="GET",handler="/",code="200"} 17
-http_request_duration_seconds_bucket{le="0.05",method="GET",handler="/",code="200"} 17
-http_request_duration_seconds_bucket{le="0.1",method="GET",handler="/",code="200"} 17
-http_request_duration_seconds_bucket{le="0.15",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.2",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.25",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.3",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.35",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.45",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.5",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.55",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.6",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="0.75",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="1",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="2.5",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_bucket{le="+Inf",method="GET",handler="/",code="200"} 25
-http_request_duration_seconds_sum{method="GET",handler="/",code="200"} 0.848463098
-http_request_duration_seconds_count{method="GET",handler="/",code="200"} 25
-```
+Open the UI on Prometheus Metrics http://localhost:9091/
+
+Expand the job `http_metrics`, then expand the histogram metric `http_request_duration_seconds`.
+
+![pushgateway user interface](pushgateway.png)

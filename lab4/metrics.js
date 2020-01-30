@@ -2,13 +2,15 @@ const url = require('url')
 const os = require('os')
 const Prometheus = require('prom-client')
 const promRegister = Prometheus.register
-let gateway = new Prometheus.Pushgateway('http://localhost:9091');
-let hostname = os.hostname()
+const gateway = new Prometheus.Pushgateway('http://localhost:9091')
+const hostname = os.hostname()
 
+// push metrics to prometheus gateway every 5 seconds
 setInterval((app) => {
-  console.log("pushing metrics...")
-  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, function (err, resp, body) { });
+  console.log('pushing metrics...')
+  gateway.pushAdd({ jobName: 'http_metrics', groupings: { instance: hostname } }, function (err, resp, body) { })
 }, 5000)
+
 const httpRequestHistogram = new Prometheus.Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds histogram',
@@ -17,10 +19,6 @@ const httpRequestHistogram = new Prometheus.Histogram({
 })
 
 module.exports = (app) => {
-  app.get('/metrics', (req, res, next) => {
-    res.set('Content-Type', promRegister.contentType)
-    res.end(promRegister.metrics())
-  })
   app.use(httpResponseMiddleware)
 }
 
@@ -37,5 +35,3 @@ const httpResponseMiddleware = (req, res, next) => {
   })
   next()
 }
-
-
