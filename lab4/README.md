@@ -5,8 +5,8 @@ See the content of [./metrics.js](./metrics.js)
 const url = require('url')
 const os = require('os')
 const Prometheus = require('prom-client')
-const promRegister = Prometheus.register
-const gateway = new Prometheus.Pushgateway('http://localhost:9091')
+
+const gateway = new Prometheus.Pushgateway('http://localhost:9091', {}, Prometheus.register)
 const hostname = os.hostname()
 
 // push metrics to prometheus gateway every 5 seconds
@@ -23,10 +23,6 @@ const httpRequestHistogram = new Prometheus.Histogram({
 })
 
 module.exports = (app) => {
-  app.get('/metrics', (req, res, next) => {
-    res.set('Content-Type', promRegister.contentType)
-    res.end(promRegister.metrics())
-  })
   app.use(httpResponseMiddleware)
 }
 
@@ -43,6 +39,7 @@ const httpResponseMiddleware = (req, res, next) => {
   })
   next()
 }
+
 ```
 
 In a new terminal start the Prometheus gateway.
